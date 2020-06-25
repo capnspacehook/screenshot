@@ -1,4 +1,4 @@
-// +build go1.10
+//+build darwin
 
 package screenshot
 
@@ -11,7 +11,7 @@ void* CompatCGDisplayCreateImageForRect(CGDirectDisplayID display, CGRect rect) 
 }
 
 void CompatCGImageRelease(void* image) {
-	CGImageRelease(image);	
+	CGImageRelease(image);
 }
 
 void* CompatCGImageCreateCopyWithColorSpace(void* image, CGColorSpaceRef space) {
@@ -26,10 +26,9 @@ import "C"
 
 import (
 	"errors"
-	"image"
 	"unsafe"
 
-	"github.com/kbinani/screenshot/internal/util"
+	"github.com/audiolion/screenshot/internal/image"
 )
 
 func Capture(x, y, width, height int) (*image.RGBA, error) {
@@ -38,7 +37,7 @@ func Capture(x, y, width, height int) (*image.RGBA, error) {
 	}
 
 	rect := image.Rect(0, 0, width, height)
-	img, err := util.CreateImage(rect)
+	img, err := image.CreateImage(rect)
 	if err != nil {
 		return nil, err
 	}
@@ -93,15 +92,15 @@ func Capture(x, y, width, height int) (*image.RGBA, error) {
 		}
 		defer C.CompatCGImageRelease(captured)
 
-		image := C.CompatCGImageCreateCopyWithColorSpace(captured, colorSpace)
-		if image == nil {
+		img := C.CompatCGImageCreateCopyWithColorSpace(captured, colorSpace)
+		if img == nil {
 			return nil, errors.New("failed copying captured image")
 		}
-		defer C.CompatCGImageRelease(image)
+		defer C.CompatCGImageRelease(img)
 
 		cgDrawRect := C.CGRectMake(cgIntersect.origin.x-cgCaptureBounds.origin.x, cgIntersect.origin.y-cgCaptureBounds.origin.y,
 			cgIntersect.size.width, cgIntersect.size.height)
-		C.CompatCGContextDrawImage(ctx, cgDrawRect, image)
+		C.CompatCGContextDrawImage(ctx, cgDrawRect, img)
 	}
 
 	i := 0
@@ -122,13 +121,13 @@ func NumActiveDisplays() int {
 	var count C.uint32_t = 0
 	if C.CGGetActiveDisplayList(0, nil, &count) == C.kCGErrorSuccess {
 		return int(count)
-	} else {
-		return 0
 	}
+
+	return 0
 }
 
 func GetDisplayBounds(displayIndex int) image.Rectangle {
-	id := getDisplayId(displayIndex)
+	id := getDisplayID(displayIndex)
 	main := C.CGMainDisplayID()
 
 	var rect image.Rectangle
@@ -148,25 +147,25 @@ func GetDisplayBounds(displayIndex int) image.Rectangle {
 	return rect
 }
 
-func getDisplayId(displayIndex int) C.CGDirectDisplayID {
+func getDisplayID(displayIndex int) C.CGDirectDisplayID {
 	main := C.CGMainDisplayID()
 	if displayIndex == 0 {
 		return main
-	} else {
-		n := NumActiveDisplays()
-		ids := make([]C.CGDirectDisplayID, n)
-		if C.CGGetActiveDisplayList(C.uint32_t(n), (*C.CGDirectDisplayID)(unsafe.Pointer(&ids[0])), nil) != C.kCGErrorSuccess {
-			return 0
+	}
+
+	n := NumActiveDisplays()
+	ids := make([]C.CGDirectDisplayID, n)
+	if C.CGGetActiveDisplayList(C.uint32_t(n), (*C.CGDirectDisplayID)(unsafe.Pointer(&ids[0])), nil) != C.kCGErrorSuccess {
+		return 0
+	}
+	index := 0
+	for i := 0; i < n; i++ {
+		if ids[i] == main {
+			continue
 		}
-		index := 0
-		for i := 0; i < n; i++ {
-			if ids[i] == main {
-				continue
-			}
-			index++
-			if index == displayIndex {
-				return ids[i]
-			}
+		index++
+		if index == displayIndex {
+			return ids[i]
 		}
 	}
 
@@ -209,7 +208,7 @@ func activeDisplayList() []C.CGDirectDisplayID {
 	ret := make([]C.CGDirectDisplayID, count)
 	if count > 0 && C.CGGetActiveDisplayList(count, (*C.CGDirectDisplayID)(unsafe.Pointer(&ret[0])), nil) == C.kCGErrorSuccess {
 		return ret
-	} else {
-		return make([]C.CGDirectDisplayID, 0)
 	}
+
+	return make([]C.CGDirectDisplayID, 0)
 }

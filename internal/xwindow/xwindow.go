@@ -2,15 +2,14 @@ package xwindow
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 
 	"github.com/BurntSushi/xgb"
 	mshm "github.com/BurntSushi/xgb/shm"
 	"github.com/BurntSushi/xgb/xinerama"
 	"github.com/BurntSushi/xgb/xproto"
+	"github.com/audiolion/screenshot/internal/image"
 	"github.com/gen2brain/shm"
-	"github.com/kbinani/screenshot/internal/util"
 )
 
 func Capture(x, y, width, height int) (img *image.RGBA, e error) {
@@ -53,7 +52,7 @@ func Capture(x, y, width, height int) (img *image.RGBA, e error) {
 	intersect := wholeScreenBounds.Intersect(targetBounds)
 
 	rect := image.Rect(0, 0, width, height)
-	img, err = util.CreateImage(rect)
+	img, err = image.CreateImage(rect)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func Capture(x, y, width, height int) (img *image.RGBA, e error) {
 
 		if useShm {
 			shmSize := intersect.Dx() * intersect.Dy() * 4
-			shmId, err := shm.Get(shm.IPC_PRIVATE, shmSize, shm.IPC_CREAT|0777)
+			shmID, err := shm.Get(shm.IPC_PRIVATE, shmSize, shm.IPC_CREAT|0777)
 			if err != nil {
 				return nil, err
 			}
@@ -84,15 +83,15 @@ func Capture(x, y, width, height int) (img *image.RGBA, e error) {
 				return nil, err
 			}
 
-			data, err = shm.At(shmId, 0, 0)
+			data, err = shm.At(shmID, 0, 0)
 			if err != nil {
 				return nil, err
 			}
 
-			mshm.Attach(c, seg, uint32(shmId), false)
+			mshm.Attach(c, seg, uint32(shmID), false)
 
 			defer mshm.Detach(c, seg)
-			defer shm.Rm(shmId)
+			defer shm.Rm(shmID)
 			defer shm.Dt(data)
 
 			_, err = mshm.GetImage(c, xproto.Drawable(screen.Root),
@@ -161,28 +160,28 @@ func GetDisplayBounds(displayIndex int) (rect image.Rectangle) {
 	defer func() {
 		e := recover()
 		if e != nil {
-			rect = image.ZR
+			rect = image.Rectangle{}
 		}
 	}()
 
 	c, err := xgb.NewConn()
 	if err != nil {
-		return image.ZR
+		return image.Rectangle{}
 	}
 	defer c.Close()
 
 	err = xinerama.Init(c)
 	if err != nil {
-		return image.ZR
+		return image.Rectangle{}
 	}
 
 	reply, err := xinerama.QueryScreens(c).Reply()
 	if err != nil {
-		return image.ZR
+		return image.Rectangle{}
 	}
 
 	if displayIndex >= int(reply.Number) {
-		return image.ZR
+		return image.Rectangle{}
 	}
 
 	primary := reply.ScreenInfo[0]

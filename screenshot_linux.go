@@ -1,9 +1,10 @@
+//+build linux
+
 package screenshot
 
 import (
-	"image"
-
-	"github.com/kbinani/screenshot/internal/xwindow"
+	"github.com/audiolion/screenshot/internal/image"
+	"github.com/audiolion/screenshot/internal/xwindow"
 )
 
 // Capture returns screen capture of specified desktop region.

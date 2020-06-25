@@ -1,9 +1,14 @@
-package util
+package image
 
 import (
 	"errors"
 	"image"
 )
+
+type RGBA = image.RGBA
+type Rectangle = image.Rectangle
+
+var Rect = image.Rect
 
 func CreateImage(rect image.Rectangle) (img *image.RGBA, e error) {
 	img = nil

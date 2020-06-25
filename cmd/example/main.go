@@ -6,7 +6,7 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/kbinani/screenshot"
+	"github.com/audiolion/screenshot"
 )
 
 // save *image.RGBA to filePath with PNG format.
