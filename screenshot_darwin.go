@@ -1,4 +1,4 @@
-//+build darwin
+// +build darwin
 
 package screenshot
 
@@ -28,7 +28,7 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/audiolion/screenshot/internal/image"
+	"github.com/capnspacehook/screenshot/internal/image"
 )
 
 func Capture(x, y, width, height int) (*image.RGBA, error) {

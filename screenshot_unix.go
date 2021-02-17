@@ -1,10 +1,10 @@
-//+build linux
+// +build freebsd linux netbsd openbsd solaris
 
 package screenshot
 
 import (
-	"github.com/audiolion/screenshot/internal/image"
-	"github.com/audiolion/screenshot/internal/xwindow"
+	"github.com/capnspacehook/screenshot/internal/image"
+	"github.com/capnspacehook/screenshot/internal/xwindow"
 )
 
 // Capture returns screen capture of specified desktop region.

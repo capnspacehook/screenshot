@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/BurntSushi/xgb"
-	mshm "github.com/BurntSushi/xgb/shm"
-	"github.com/BurntSushi/xgb/xinerama"
-	"github.com/BurntSushi/xgb/xproto"
-	"github.com/audiolion/screenshot/internal/image"
 	"github.com/gen2brain/shm"
+	"github.com/jezek/xgb"
+	mshm "github.com/jezek/xgb/shm"
+	"github.com/jezek/xgb/xinerama"
+	"github.com/jezek/xgb/xproto"
+
+	"github.com/capnspacehook/screenshot/internal/image"
 )
 
 func Capture(x, y, width, height int) (img *image.RGBA, e error) {

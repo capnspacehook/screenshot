@@ -3,7 +3,7 @@
 package screenshot
 
 import (
-	"github.com/audiolion/screenshot/internal/image"
+	"github.com/capnspacehook/screenshot/internal/image"
 )
 
 // CaptureDisplay captures whole region of displayIndex'th display.

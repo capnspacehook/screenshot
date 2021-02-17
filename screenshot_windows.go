@@ -1,4 +1,4 @@
-//+build windows
+// +build windows
 
 package screenshot
 
@@ -7,8 +7,9 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/audiolion/screenshot/internal/image"
 	win "github.com/lxn/win"
+
+	"github.com/capnspacehook/screenshot/internal/image"
 )
 
 var (

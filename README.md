@@ -1,8 +1,8 @@
 # screenshot
 
 [![Build Status](https://travis-ci.org/audiolion/screenshot.svg?branch=master)](https://travis-ci.org/audiolion/screenshot)
-[![](https://img.shields.io/badge/godoc-reference-5272B4.svg)](https://pkg.go.dev/github.com/audiolion/screenshot)
-[![](https://img.shields.io/badge/license-MIT-428F7E.svg?style=flat)](https://github.com/audiolion/screenshot/blob/master/LICENSE)
+[![](https://img.shields.io/badge/godoc-reference-5272B4.svg)](https://pkg.go.dev/github.com/capnspacehook/screenshot)
+[![](https://img.shields.io/badge/license-MIT-428F7E.svg?style=flat)](https://github.com/capnspacehook/screenshot/blob/master/LICENSE)
 
 - Go library to capture desktop screen.
 - Support Windows, Mac, Linux, FreeBSD, OpenBSD, NetBSD, and Solaris environment.
@@ -17,7 +17,7 @@
 package main
 
 import (
-  "github.com/audiolion/screenshot"
+  "github.com/capnspacehook/screenshot"
   "image/png"
   "os"
   "fmt"
